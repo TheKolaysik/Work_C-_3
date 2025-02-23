@@ -18,8 +18,18 @@ int main() {
 	float** multi_matrix = m_p_matrix(matrix, trans_matrix, n);
 	cout << "Исходная матрица" << endl;
 	print_matrix(matrix, n);
+	cout << "Обратная матрица" << endl;
 	print_matrix(trans_matrix, n);
-
+	cout << "Результат умножения" << endl;
+	print_matrix(multi_matrix, n);
+	for (int i = 0; i < n; i++) {
+		delete[] matrix[i];
+		delete[] trans_matrix[i];
+		delete[] multi_matrix[i];
+	}
+	delete[] matrix;
+	delete[] trans_matrix;
+	delete[] multi_matrix;
 }
 
 float** create_matrix(int size) {
@@ -89,7 +99,6 @@ float** reverse_matrix(float** matrix, int size) {
 }
 
 int minor_matrix(float** matrix, int i, int j, int size) {
-	cout << "minor" << endl;
 	float** m_matrix = new float* [size - 1];
 	int determ, x_new = 0, y_new = 0;
 	for (int i = 0; i < size - 1; i++) {
@@ -104,22 +113,18 @@ int minor_matrix(float** matrix, int i, int j, int size) {
 			if (x == j) {
 				continue;
 			}
-			cout << x << " " << y << " " << x_new << " " << y_new << endl;
+			//cout << x << " " << y << " " << x_new << " " << y_new << endl;
 			m_matrix[y_new][x_new] = matrix[y][x];
-			cout << m_matrix[y_new][x_new] << endl;
 			y_new++;
 		}
 		x_new++;
 	}
-	cout << "minor_matrix" << endl;
 	determ = m_matrix[0][0] * m_matrix[1][1] * m_matrix[2][2] + m_matrix[0][1] * m_matrix[1][2] * m_matrix[2][0] +
 		+ m_matrix[0][2] * m_matrix[1][0] * m_matrix[2][1] - m_matrix[0][2] * m_matrix[1][1] * m_matrix[2][0] -
 		- m_matrix[0][0] * m_matrix[1][2] * m_matrix[2][1] - m_matrix[0][1] * m_matrix[1][0] * m_matrix[2][2];
 	for (int i = 0; i < size - 1; i++) {
-		cout << i;
 		delete[] m_matrix[i];
 	}
-	cout << "+";
 	delete[] m_matrix;
 	return determ;
 }
@@ -134,7 +139,6 @@ int determ_matrix(float** matrix, int size) {
 }
 
 void trans_matrix(float** matrix, int size) {
-	cout << "trans" << endl;
 	int count = 1;
 	float temp;
 	for (int i = 0; i < size; i++) {
@@ -148,7 +152,6 @@ void trans_matrix(float** matrix, int size) {
 }
 
 float** m_p_matrix(float** one_matrix, float** two_matrix, int size) {
-	int x = 0, y = 0;
 	float res;
 	float** multiplication = new float* [size];
 	for (int i = 0; i < size; i++) {
@@ -156,9 +159,12 @@ float** m_p_matrix(float** one_matrix, float** two_matrix, int size) {
 	}
 	for (int i = 0; i < size; i++) {
 		for (int j = 0; j < size; j++) {
+			res = 0;
 			for (int k = 0; k < size; k++) {
-				one_matrix[i][j]
+				res += one_matrix[i][k] * two_matrix[k][j];
 			}
+			multiplication[i][j] = res;
 		}
 	}
+	return multiplication;
 }
